@@ -9,9 +9,10 @@ final class ObserverPatternTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        audioPlayer = AudioPlayer()
-        miniPlayerView = MiniPlayerView()
-        nowPlayingView = NowPlayingView()
+        let notificationCenter = NotificationCenter()
+        audioPlayer = AudioPlayer(notificationCenter: notificationCenter)
+        miniPlayerView = MiniPlayerView(notificationCenter: notificationCenter)
+        nowPlayingView = NowPlayingView(notificationCenter: notificationCenter)
     }
 
     override func tearDown() {

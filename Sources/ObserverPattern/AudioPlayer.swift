@@ -14,8 +14,21 @@ class AudioPlayer {
         }
     }
 
+    private let notificationCenter: NotificationCenter
+
+    init(notificationCenter: NotificationCenter = .default) {
+        self.notificationCenter = notificationCenter
+    }
+
     func stateDidChange() {
-        // TODO: Send notifications to all observers
+        switch state {
+        case .idle:
+            notificationCenter.post(name: .playbackDidStop, object: nil)
+        case .playing(let item):
+            notificationCenter.post(name: .playbackDidStart, object: item)
+        case .paused(let item):
+            notificationCenter.post(name: .playbackDidPause, object: item)
+        }
     }
 }
 
