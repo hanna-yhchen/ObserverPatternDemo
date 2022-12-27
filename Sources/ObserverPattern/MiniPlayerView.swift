@@ -16,18 +16,30 @@ class MiniPlayerView: UIView {
 
         notificationCenter.addObserver(
             self,
-            selector: #selector(playbackDidStart),
-            name: .playbackDidStart,
-            object: nil)
+            selector: #selector(playbackStateDidChange),
+            notificationType: AudioPlayer.State.self)
     }
 
-    @objc private func playbackDidStart(_ notification: Notification) {
-        guard let item = notification.object as? AudioPlayer.Item else {
-            assertionFailure("Invalid object: \(notification.object as Any)")
+    @objc private func playbackStateDidChange(_ notification: Notification) {
+        guard let state = AudioPlayer.State(notification: notification) else {
+            assertionFailure("Invalid notification: \(notification)")
             return
         }
 
-        titleLabel.text = item.title
-        durationLabel.text = "\(item.duration)"
+        var item: AudioPlayer.Item?
+
+        switch state {
+        case .idle:
+            break
+        case .playing(let playingItem):
+            item = playingItem
+        case .paused(let pausedItem):
+            item = pausedItem
+        }
+
+        if let item = item {
+            titleLabel.text = item.title
+            durationLabel.text = "\(item.duration)"
+        }
     }
 }

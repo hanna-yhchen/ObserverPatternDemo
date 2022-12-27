@@ -21,14 +21,7 @@ class AudioPlayer {
     }
 
     func stateDidChange() {
-        switch state {
-        case .idle:
-            notificationCenter.post(name: .playbackDidStop, object: nil)
-        case .playing(let item):
-            notificationCenter.post(name: .playbackDidStart, object: item)
-        case .paused(let item):
-            notificationCenter.post(name: .playbackDidPause, object: item)
-        }
+        notificationCenter.post(state)
     }
 }
 
@@ -62,7 +55,7 @@ extension AudioPlayer {
         var duration: TimeInterval
     }
 
-    enum State {
+    enum State: NotificationRepresentable {
         case idle
         case playing(Item)
         case paused(Item)
