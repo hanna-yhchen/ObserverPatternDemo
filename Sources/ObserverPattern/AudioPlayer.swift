@@ -14,8 +14,14 @@ class AudioPlayer {
         }
     }
 
+    private let notificationCenter: MyNotificationCenter
+
     func stateDidChange() {
-        // TODO: Send notifications to all observers
+        notificationCenter.post(name: .playbackStateDidChange, userInfo: [State.userInfoKey: state])
+    }
+
+    init(notificationCenter: MyNotificationCenter = .default) {
+        self.notificationCenter = notificationCenter
     }
 }
 
@@ -53,5 +59,7 @@ extension AudioPlayer {
         case idle
         case playing(Item)
         case paused(Item)
+
+        static var userInfoKey = String(reflecting: Self.self)
     }
 }

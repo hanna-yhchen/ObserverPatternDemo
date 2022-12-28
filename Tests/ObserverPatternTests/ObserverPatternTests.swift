@@ -9,9 +9,10 @@ final class ObserverPatternTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        audioPlayer = AudioPlayer()
-        miniPlayerView = MiniPlayerView()
-        nowPlayingView = NowPlayingView()
+        let notificationCenter = MyNotificationCenter()
+        audioPlayer = AudioPlayer(notificationCenter: notificationCenter)
+        miniPlayerView = MiniPlayerView(notificationCenter: notificationCenter)
+        nowPlayingView = NowPlayingView(notificationCenter: notificationCenter)
     }
 
     override func tearDown() {
@@ -37,5 +38,22 @@ final class ObserverPatternTests: XCTestCase {
 
         XCTAssertEqual(miniPlayerView.titleLabel.text, title)
         XCTAssertEqual(miniPlayerView.durationLabel.text, String(duration))
+    }
+
+    func testObservationRemovedAfterDeallocateObserver() {
+        let notificationCenter = MyNotificationCenter()
+        audioPlayer = AudioPlayer(notificationCenter: notificationCenter)
+        miniPlayerView = MiniPlayerView(notificationCenter: notificationCenter)
+        nowPlayingView = NowPlayingView(notificationCenter: notificationCenter)
+
+        XCTAssertEqual(notificationCenter.observations[.playbackStateDidChange]?.values.count, 2)
+
+        miniPlayerView = nil
+
+        XCTAssertEqual(notificationCenter.observations[.playbackStateDidChange]?.values.count, 1)
+
+        nowPlayingView = nil
+
+        XCTAssertEqual(notificationCenter.observations[.playbackStateDidChange]?.values.count, 0)
     }
 }
